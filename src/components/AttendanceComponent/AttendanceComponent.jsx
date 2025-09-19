@@ -10,6 +10,7 @@ import {
   handleAnswerIncomingCallSocket,
   handleChangeAgentStatusToAvailable,
   handleChangeAgentStatusToBusy,
+  handleDisconectAgent,
   handleIncomingCallNotAnsweredSocket,
   handleRegisterNotAnsweredCallSocket,
   loadAgentSocketEvents,
@@ -82,29 +83,11 @@ export default function AttendanceComponent() {
 
     setTriggerNotAnswered(false);
     setModal({ isOpen: false });
-    handleChangeAgentStatusToBusy(socket);
+    handleDisconectAgent(socket);
     handleChangeAvailability();
 
     return;
   }, [triggerNotAnswered]);
-
-  useEffect(() => {
-    if (!socket) return;
-    const socketType = {
-      agent: () =>
-        loadAgentSocketEvents(
-          socket,
-          setModal,
-          setIsCalling,
-          setRedirectToRoom,
-          setCallObject
-        ),
-    };
-
-    socketType["agent"]();
-
-    return;
-  }, [socket]);
 
   useEffect(() => {
     if (!modal.open) return;
@@ -129,19 +112,30 @@ export default function AttendanceComponent() {
     return (window.location.href = `/authenticated/room?name=${callObject.room.name}&t=${callObject.agent.token}&returnUrl=${window.location.pathname}`);
   };
 
-  const buttonText = isOnline ? "Ficar indisponível" : "Ficar disponível";
+  const buttonText = isOnline ? "Desconectar" : "Conectar";
 
-  const handleChangeAvailability = () => setIsOnline((prev) => !prev);
+  const handleChangeAvailability = () => {
+    if (isOnline) {
+      handleDisconectAgent(socket);
+    }
+    setIsOnline((prev) => !prev);
+  };
 
   useEffect(() => {
     if (!socket) return;
-    if (!isOnline) {
-      handleChangeAgentStatusToBusy(socket);
+
+    if (isOnline) {
+      socket.connect();
+
+      loadAgentSocketEvents(
+        socket,
+        setModal,
+        setIsCalling,
+        setRedirectToRoom,
+        setCallObject
+      );
       return;
     }
-    handleChangeAgentStatusToAvailable(socket);
-
-    return;
   }, [isOnline]);
 
   const image = logo2.default;

@@ -91,7 +91,7 @@ export default function Login() {
         credentials,
       });
 
-      const { authToken } = data;
+      const { authToken, phone } = data;
       setToken(authToken);
 
       const findEmailInLoggedHistory = !!alreadyPreviouslyLoggedUsers.find(
@@ -106,6 +106,7 @@ export default function Login() {
       const smsData = await AuthenticationService.generateSMSCredentials({
         email,
         credentials,
+        phone,
       });
 
       const { random } = smsData;

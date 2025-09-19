@@ -46,9 +46,9 @@ export default function BatchRegister() {
       const CSVRows = [
         "Id",
         "Nome",
-        "Usuário",
+        "Email",
         "Telefone",
-        "CPF",
+        "Documento",
         "Setor",
         "Senha",
       ];

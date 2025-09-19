@@ -112,7 +112,7 @@ export default function EnterpriseCallsManagement() {
     }
 
     const filter = callsList.filter((calls) =>
-      calls[filterType].toLowerCase().includes(e.target.value.toLowerCase())
+      calls[filterType]?.toLowerCase()?.includes(e.target.value?.toLowerCase())
     );
 
     const durationInMinutes = sumCallDurations(filter || callsList);
